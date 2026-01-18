@@ -1,0 +1,91 @@
+{
+  "v": "5.5.7",
+  "meta": {
+    "g": "LottieFiles AE 0.1.20"
+  },
+  "fr": 30,
+  "ip": 0,
+  "op": 120,
+  "w": 500,
+  "h": 500,
+  "nm": "hello-cursive-write-in-and-out",
+  "ddd": 0,
+  "assets": [],
+  "layers": [
+    {
+      "ddd": 0,
+      "ind": 1,
+      "ty": 4,
+      "nm": "Shape Layer 1",
+      "sr": 1,
+      "ks": {
+        "o": { "a": 0, "k": 100 },
+        "r": { "a": 0, "k": 0 },
+        "p": { "a": 0, "k": [250, 250, 0] },
+        "a": { "a": 0, "k": [0, 0, 0] },
+        "s": { "a": 0, "k": [100, 100, 100] }
+      },
+      "ao": 0,
+      "shapes": [
+        {
+          "ty": "gr",
+          "it": [
+            {
+              "ind": 0,
+              "ty": "sh",
+              "ix": 1,
+              "ks": {
+                "a": 0,
+                "k": {
+                  "i": [[0, 0], [0, 0], ...],  // Path data (truncated)
+                  "o": [[0, 0], [0, 0], ...],
+                  "v": [[0, 0], [0, 0], ...],
+                  "c": true
+                }
+              },
+              "nm": "Path 1",
+              "mn": "ADBE Vector Shape - Group",
+              "hd": false
+            },
+            {
+              "ty": "st",
+              "c": { "a": 0, "k": [0, 0, 0, 1] },
+              "o": { "a": 0, "k": 100 },
+              "w": { "a": 0, "k": 2 },
+              "lc": 1,
+              "lj": 1,
+              "ml": 4,
+              "bm": 0,
+              "nm": "Stroke 1",
+              "mn": "ADBE Vector Graphic - Stroke",
+              "hd": false
+            },
+            {
+              "ty": "tr",
+              "p": { "a": 0, "k": [0, 0] },
+              "a": { "a": 0, "k": [0, 0] },
+              "s": { "a": 0, "k": [100, 100] },
+              "r": { "a": 0, "k": 0 },
+              "o": { "a": 0, "k": 100 },
+              "sk": { "a": 0, "k": 0 },
+              "sa": { "a": 0, "k": 0 },
+              "nm": "Transform"
+            }
+          ],
+          "nm": "Shape 1",
+          "np": 3,
+          "cix": 2,
+          "bm": 0,
+          "ix": 1,
+          "mn": "ADBE Vector Group",
+          "hd": false
+        }
+      ],
+      "ip": 0,
+      "op": 120,
+      "st": 0,
+      "bm": 0
+    }
+    // More layers for the full animation...
+  ]
+}

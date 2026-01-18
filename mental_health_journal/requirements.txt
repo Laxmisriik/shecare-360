@@ -1,0 +1,8 @@
+flask
+flask-cors
+python-dotenv
+google-generativeai
+transformers
+torch
+sqlalchemy
+psycopg2-binary

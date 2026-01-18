@@ -1,0 +1,209 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* custom tokens */
+:root{
+  --accent-pink: #f4d7db;
+  --accent-blue: #dbe7f8;
+  --accent-green: #d9efe6;
+}
+
+/* Flower Animation Styles */
+.flower {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+}
+
+.petal {
+  position: absolute;
+  width: 35px;
+  height: 60px;
+  background: linear-gradient(180deg, hsl(320, 65%, 75%), hsl(320, 65%, 60%));
+  border-radius: 50%;
+}
+
+/* Different color schemes for different flower sizes */
+.flower-small .petal {
+  background: linear-gradient(180deg, hsl(320, 65%, 75%), hsl(320, 65%, 60%));
+}
+
+.flower-medium .petal {
+  background: linear-gradient(180deg, hsl(340, 75%, 85%), hsl(340, 75%, 70%));
+}
+
+.flower-large .petal {
+  background: linear-gradient(180deg, hsl(180, 60%, 90%), hsl(180, 60%, 75%));
+}
+
+.petal1 {
+  transform: rotate(0deg) translateY(-50%);
+  animation-delay: 0.1s;
+}
+
+.petal2 {
+  transform: rotate(45deg) translateY(-50%);
+  animation-delay: 0.2s;
+}
+
+.petal3 {
+  transform: rotate(90deg) translateY(-50%);
+  animation-delay: 0.3s;
+}
+
+.petal4 {
+  transform: rotate(135deg) translateY(-50%);
+  animation-delay: 0.4s;
+}
+
+.petal5 {
+  transform: rotate(180deg) translateY(-50%);
+  animation-delay: 0.5s;
+}
+
+.petal6 {
+  transform: rotate(225deg) translateY(-50%);
+  animation-delay: 0.6s;
+}
+
+.petal7 {
+  transform: rotate(270deg) translateY(-50%);
+  animation-delay: 0.7s;
+}
+
+.petal8 {
+  transform: rotate(315deg) translateY(-50%);
+  animation-delay: 0.8s;
+}
+
+.center {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background-color: hsl(320, 65%, 85%);
+  border-radius: 50%;
+}
+
+
+
+.flower {
+  animation-name: rotateFlower;
+  animation-duration: 8s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease;
+}
+
+@keyframes rotateFlower {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.5) rotate(360deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Flower sizes */
+.flower-small {
+  width: 150px;
+  height: 150px;
+}
+
+.flower-small .petal {
+  width: 17.5px;
+  height: 30px;
+}
+
+.flower-small .center {
+  width: 15px;
+  height: 15px;
+  background-color: hsl(320, 65%, 85%);
+}
+
+.flower-medium {
+  width: 225px;
+  height: 225px;
+}
+
+.flower-medium .petal {
+  width: 26.25px;
+  height: 45px;
+}
+
+.flower-medium .center {
+  width: 22.5px;
+  height: 22.5px;
+  background-color: hsl(340, 75%, 90%);
+}
+
+.flower-large {
+  width: 375px;
+  height: 375px;
+}
+
+.flower-large .petal {
+  width: 43.75px;
+  height: 75px;
+}
+
+.flower-large .center {
+  width: 37.5px;
+  height: 37.5px;
+  background-color: hsl(180, 60%, 85%);
+}
+
+/* From Uiverse.io by mrhyddenn */
+.shadow__btn {
+  padding: 10px 20px;
+  border: none;
+  font-size: 17px;
+  color: #fff;
+  border-radius: 7px;
+  letter-spacing: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: 0.5s;
+  transition-property: box-shadow;
+  background: linear-gradient(45deg, #ffb6c1, #dda0dd);
+  box-shadow: 0 0 25px rgba(255, 182, 193, 0.5);
+}
+
+.shadow__btn:hover {
+  box-shadow: 0 0 5px rgba(255, 182, 193, 0.5),
+              0 0 25px rgba(255, 182, 193, 0.5),
+              0 0 50px rgba(221, 160, 221, 0.5),
+              0 0 100px rgba(221, 160, 221, 0.5);
+}
+
+/* Scrolling animation for feature cards */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 20s linear infinite;
+}
+
+/* Loading flower animation */
+@keyframes moveAndRotate {
+  0% {
+    transform: translateX(0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translateX(0) rotate(360deg) scale(5);
+  }
+  100% {
+    transform: translateX(1000px) rotate(720deg) scale(3);
+  }
+}
