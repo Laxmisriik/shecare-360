@@ -56,11 +56,7 @@ def log_diet():
             user_id=user_id,
             meal_type=meal_type,
             food_item=food_item,
-            carbs=nutrition["carbs"],
-            protein=nutrition["protein"],
-            fats=nutrition["fats"],
-            vitamins=",".join(nutrition["vitamins"]),
-            minerals=",".join(nutrition["minerals"])
+            nutrients=nutrition,  # JSON column already defined on DietLog
         )
         db.add(entry)
         db.commit()

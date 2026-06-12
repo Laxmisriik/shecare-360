@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from sqlalchemy.orm import Session
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from database.db import engine
 from database.models import Base, User
@@ -10,6 +11,9 @@ from routes.journal_routes import journal_bp
 from routes.sentiment_routes import sentiment_bp
 from routes.period_routes import period_bp
 from routes.diet_routes import diet_bp
+from routes.pregnancy_routes import pregnancy_bp
+from routes.helpline_routes import helpline_bp
+
 
 import logging
 import os
@@ -26,6 +30,11 @@ CORS(app, supports_credentials=True)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+
+def _is_hashed(value: str) -> bool:
+    """werkzeug hashes are prefixed with their method (pbkdf2:/scrypt:)."""
+    return bool(value) and value.startswith(("pbkdf2:", "scrypt:"))
 
 # ---------------------------
 # DATABASE INIT
@@ -54,7 +63,7 @@ def register():
         if existing_user:
             return jsonify({"success": False, "message": "User already exists"}), 409
 
-        user = User(username=username, password=password)
+        user = User(username=username, password=generate_password_hash(password))
         session.add(user)
         session.commit()
 
@@ -72,12 +81,22 @@ def login():
     password = data.get("password")
 
     with Session(engine) as session:
-        user = session.query(User).filter_by(
-            username=username,
-            password=password
-        ).first()
+        user = session.query(User).filter_by(username=username).first()
 
         if not user:
+            return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+        stored = user.password or ""
+        if _is_hashed(stored):
+            valid = check_password_hash(stored, password)
+        else:
+            # Legacy plaintext row: verify directly, then upgrade to a hash.
+            valid = (stored == password)
+            if valid:
+                user.password = generate_password_hash(password)
+                session.commit()
+
+        if not valid:
             return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
     return jsonify({
@@ -95,9 +114,15 @@ app.register_blueprint(chat_bp)
 app.register_blueprint(journal_bp)
 app.register_blueprint(sentiment_bp)
 
+app.register_blueprint(pregnancy_bp, url_prefix="/api/pregnancy")
+
+
 # 🩸 Period + 🥗 Diet (PCOS)
 app.register_blueprint(period_bp)
+# diet_bp already has url_prefix="/api/diet" so do not add extra prefix
 app.register_blueprint(diet_bp)
+app.register_blueprint(helpline_bp)
+
 
 # ---------------------------
 # HEALTH CHECK
