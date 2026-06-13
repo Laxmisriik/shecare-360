@@ -17,6 +17,7 @@ from routes.period_routes import period_bp
 from routes.diet_routes import diet_bp
 from routes.pregnancy_routes import pregnancy_bp
 from routes.helpline_routes import helpline_bp
+from routes.symptom_routes import symptom_bp
 
 
 import logging
@@ -143,6 +144,9 @@ app.register_blueprint(period_bp)
 # diet_bp already has url_prefix="/api/diet" so do not add extra prefix
 app.register_blueprint(diet_bp)
 app.register_blueprint(helpline_bp)
+
+# 🩺 Symptom tracking (Phase 3)
+app.register_blueprint(symptom_bp)
 
 
 # ---------------------------

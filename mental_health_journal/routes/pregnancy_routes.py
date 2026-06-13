@@ -51,6 +51,51 @@ def add_pregnancy_log():
         "message": "Pregnancy log created",
         "current_week": current_week
     })
+
+
+def _trimester(week: int) -> str:
+    if week <= 12:
+        return "First"
+    if week <= 27:
+        return "Second"
+    return "Third"
+
+
+# Phase 3: JWT-only status (no user_id in URL). Returns the caller's latest
+# pregnancy with week/trimester recomputed live from LMP so it stays current.
+@pregnancy_bp.route("/status", methods=["GET"])
+@jwt_required()
+def get_my_pregnancy_status():
+    user_id = int(get_jwt_identity())   # identity from JWT, never the client
+
+    db = SessionLocal()
+    try:
+        pregnancy = (
+            db.query(PregnancyLog)
+            .filter(PregnancyLog.user_id == user_id)
+            .order_by(PregnancyLog.created_at.desc())
+            .first()
+        )
+    finally:
+        db.close()
+
+    if not pregnancy:
+        return jsonify({"has_pregnancy": False}), 200
+
+    current_week = calculate_pregnancy_week(pregnancy.last_menstrual_period)
+    return jsonify({
+        "has_pregnancy": True,
+        "last_menstrual_period": pregnancy.last_menstrual_period.isoformat(),
+        "expected_due_date": (
+            pregnancy.expected_due_date.isoformat()
+            if pregnancy.expected_due_date else None
+        ),
+        "current_week": current_week,
+        "trimester": _trimester(current_week),
+        "weeks_remaining": max(0, 40 - current_week),
+    }), 200
+
+
 @pregnancy_bp.route("/status/<int:user_id>", methods=["GET"])
 @jwt_required()
 def get_pregnancy_status(user_id):

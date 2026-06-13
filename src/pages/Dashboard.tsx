@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, CalendarHeart, Utensils, AlertTriangle, Sparkles, ArrowUpRight, LogOut } from "lucide-react";
+import { BookOpen, CalendarHeart, Utensils, AlertTriangle, Sparkles, ArrowUpRight, LogOut, Baby, Activity } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import CycleInsights from "@/components/CycleInsights";
 
 const Dashboard = () => {
   const hour = new Date().getHours();
@@ -254,6 +255,9 @@ const Dashboard = () => {
             <div className="db-divider-line" />
           </div>
 
+          {/* Cycle Insights (backend-backed; renders only when cycles exist) */}
+          <CycleInsights />
+
           {/* Card Grid */}
           <div className="db-grid">
 
@@ -330,6 +334,44 @@ const Dashboard = () => {
               </p>
               <div className="card-arrow">
                 <ArrowUpRight size={15} color="#F06A4A" />
+              </div>
+            </Link>
+
+            {/* Pregnancy — FULL WIDTH */}
+            <Link to="/pregnancy" className="db-card anim d5" style={{ gridColumn: "span 12" }}>
+              <div className="card-splash" style={{ background: "#7C6AF7" }} />
+              <div className="card-tag" style={{ background: "#EEEAFF", color: "#7C6AF7" }}>
+                <span className="card-tag-dot" style={{ background: "#7C6AF7" }} />
+                Maternity
+              </div>
+              <div className="card-icon" style={{ background: "#EEEAFF" }}>
+                <Baby size={23} color="#7C6AF7" />
+              </div>
+              <h2 className="card-label">Pregnancy Journey</h2>
+              <p className="card-desc">
+                Track your week, trimester &amp; estimated due date from your last period.
+              </p>
+              <div className="card-arrow">
+                <ArrowUpRight size={15} color="#7C6AF7" />
+              </div>
+            </Link>
+
+            {/* Symptom Tracker — FULL WIDTH */}
+            <Link to="/symptom-tracker" className="db-card anim d5" style={{ gridColumn: "span 12" }}>
+              <div className="card-splash" style={{ background: "#F26B8A" }} />
+              <div className="card-tag" style={{ background: "#FFE8EF", color: "#F26B8A" }}>
+                <span className="card-tag-dot" style={{ background: "#F26B8A" }} />
+                Wellness
+              </div>
+              <div className="card-icon" style={{ background: "#FFE8EF" }}>
+                <Activity size={23} color="#F26B8A" />
+              </div>
+              <h2 className="card-label">Symptom Tracker</h2>
+              <p className="card-desc">
+                Log symptoms &amp; severity, and review your history over time.
+              </p>
+              <div className="card-arrow">
+                <ArrowUpRight size={15} color="#F26B8A" />
               </div>
             </Link>
 
