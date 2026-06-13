@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login, register } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,29 +18,16 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast({
-          title: "Sign in failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Welcome back!",
-          description: "You have been signed in successfully.",
-        });
-        navigate("/");
-      }
-    } catch (err) {
-      console.error(err);
+      await login(username, password);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred.",
+        title: "Welcome back!",
+        description: "You have been signed in successfully.",
+      });
+      navigate("/");
+    } catch (err) {
+      toast({
+        title: "Sign in failed",
+        description: err instanceof Error ? err.message : "An unexpected error occurred.",
         variant: "destructive",
       });
     } finally {
@@ -62,32 +50,18 @@ const Auth = () => {
     }
 
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast({
-          title: "Sign up failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account.",
-        });
-        setIsSignUp(false);
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-      }
-    } catch (err) {
-      console.error(err);
+      await register(username, password);
+      // Registration succeeded — sign the user straight in for a smooth flow.
+      await login(username, password);
       toast({
-        title: "Error",
-        description: "An unexpected error occurred.",
+        title: "Account created!",
+        description: "You're all set — welcome to FemCare.",
+      });
+      navigate("/");
+    } catch (err) {
+      toast({
+        title: "Sign up failed",
+        description: err instanceof Error ? err.message : "An unexpected error occurred.",
         variant: "destructive",
       });
     } finally {
@@ -126,14 +100,15 @@ const Auth = () => {
 
         <form className="space-y-4" onSubmit={isSignUp ? handleSignUp : handleLogin}>
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium mb-1">Username</label>
             <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
+              autoComplete="username"
               className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary/50"
-              placeholder="Enter your email"
+              placeholder="Enter your username"
             />
           </div>
 

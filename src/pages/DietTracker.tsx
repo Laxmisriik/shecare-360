@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { authedFetch } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   ArrowLeft, Plus, X, ChevronRight, TrendingUp,
   Droplets, Activity, Target, Clock, AlertCircle
@@ -36,11 +38,10 @@ const NUTRIENTS = [
   { key: "iron",     label: "Iron",     unit: "mg", target: 18,  color: "#D97706", icon: "🩸" },
   { key: "calcium",  label: "Calcium",  unit: "mg", target: 1000,color: "#6D28D9", icon: "🦴" },
 ];
-const USER_ID = 1;
-
 export default function DietTracker() {
   const navigate   = useNavigate();
   const { toast }  = useToast();
+  const { userId } = useAuth();
 
   const [mealType, setMealType]   = useState("Breakfast");
   const [foodItem, setFoodItem]   = useState("");
@@ -53,23 +54,27 @@ export default function DietTracker() {
   const [showModal, setShowModal] = useState(false);
 
   const fetchHistory = async () => {
-    try { const r = await fetch(`http://127.0.0.1:8001/api/diet/history/${USER_ID}`); setHistory(await r.json() || []); }
+    if (userId == null) return;
+    try { const r = await authedFetch(`/api/diet/history/${userId}`); setHistory(await r.json() || []); }
     catch { setHistory([]); }
   };
   const fetchRecs = async () => {
-    try { const r = await fetch(`http://127.0.0.1:8001/api/diet/recommendations/${USER_ID}`); setRecs(await r.json()); }
+    if (userId == null) return;
+    try { const r = await authedFetch(`/api/diet/recommendations/${userId}`); setRecs(await r.json()); }
     catch {}
   };
-  useEffect(() => { fetchHistory(); fetchRecs(); }, []);
+  useEffect(() => { fetchHistory(); fetchRecs(); }, [userId]);
 
   const handleSubmit = async () => {
     if (!foodItem.trim()) { toast({ title: "Enter a food item", variant: "destructive" }); return; }
     setSubmitting(true);
     try {
-      await fetch("http://127.0.0.1:8001/api/diet/log", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id: USER_ID, meal_type: mealType.toLowerCase(), food_item: foodItem }),
+      // user identity is derived from the JWT server-side, not sent in the body.
+      const res = await authedFetch("/api/diet/log", {
+        method: "POST",
+        body: JSON.stringify({ meal_type: mealType.toLowerCase(), food_item: foodItem }),
       });
+      if (res.status === 401) { navigate("/auth"); return; }
       toast({ title: "Meal logged successfully" });
       setFoodItem(""); setShowModal(false);
       fetchHistory(); fetchRecs();

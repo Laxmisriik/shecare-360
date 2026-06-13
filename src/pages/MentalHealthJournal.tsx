@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Send, Mic, MicOff, ArrowLeft, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { authedFetch } from "@/lib/api";
 
 interface ChatMessage {
   sender: "user" | "ai";
@@ -61,11 +62,15 @@ const MentalHealthJournal = () => {
     setChatMessages((p) => [...p, { sender: "user", text: msg }]);
     setChatLoading(true);
     try {
-      const res = await fetch("http://127.0.0.1:8001/chat", {
+      const res = await authedFetch("/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: msg }),
       });
+      if (res.status === 401) {
+        setChatMessages((p) => [...p, { sender: "ai", text: "Your session has expired. Please sign in again." }]);
+        navigate("/auth");
+        return;
+      }
       const data = await res.json();
       setChatMessages((p) => [...p, { sender: "ai", text: data.bot_reply }]);
     } catch {

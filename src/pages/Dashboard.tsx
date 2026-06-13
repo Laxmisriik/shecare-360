@@ -1,10 +1,20 @@
-import { Link } from "react-router-dom";
-import { BookOpen, CalendarHeart, Utensils, AlertTriangle, Sparkles, ArrowUpRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { BookOpen, CalendarHeart, Utensils, AlertTriangle, Sparkles, ArrowUpRight, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Dashboard = () => {
   const hour = new Date().getHours();
   const timeOfDay = hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening";
   const timeEmoji = hour < 12 ? "🌸" : hour < 17 ? "☀️" : "🌙";
+
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const initial = user?.username?.charAt(0).toUpperCase() || "U";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth", { replace: true });
+  };
 
   return (
     <>
@@ -223,8 +233,17 @@ const Dashboard = () => {
                 All good today
               </div>
               <div className="db-avatar-ring">
-                <div className="db-avatar-inner">U</div>
+                <div className="db-avatar-inner">{initial}</div>
               </div>
+              <button
+                className="db-spark"
+                onClick={handleLogout}
+                style={{ cursor: "pointer", border: "1px solid #EDE8E1" }}
+                title="Log out"
+              >
+                <LogOut size={12} color="#A89B8C" />
+                Log out
+              </button>
             </div>
           </div>
 
