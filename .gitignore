@@ -1,3 +1,9 @@
+# Node / frontend dependencies & build output
+node_modules/
+dist/
+dist-ssr/
+*.tsbuildinfo
+
 # Python
 __pycache__/
 *.pyc
