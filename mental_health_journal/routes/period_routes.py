@@ -2,22 +2,24 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 from database.db import SessionLocal
 from database.models import PeriodCycle
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 period_bp = Blueprint("period", __name__, url_prefix="/api/period")
 
 
 @period_bp.route("/log", methods=["POST"])
+@jwt_required()
 def log_period():
     data = request.get_json()
 
-    user_id = data.get("user_id")
+    user_id = int(get_jwt_identity())   # identity from JWT, not client input
     start_date = data.get("start_date")
     cycle_length = data.get("cycle_length")
     period_length = data.get("period_length")
 
-    if not all([user_id, start_date, cycle_length, period_length]):
+    if not all([start_date, cycle_length, period_length]):
         return jsonify({
-            "error": "user_id, start_date, cycle_length, and period_length are required"
+            "error": "start_date, cycle_length, and period_length are required"
         }), 400
 
     # ✅ Convert string → date

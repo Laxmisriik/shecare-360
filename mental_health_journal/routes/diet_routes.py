@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy.orm import Session
 from database.db import engine
 from database.models import DietLog
+from flask_jwt_extended import jwt_required, get_jwt_identity
 import json
 
 diet_bp = Blueprint("diet", __name__, url_prefix="/api/diet")
@@ -38,14 +39,15 @@ def analyze_food_with_ai(food_text: str):
 # LOG DIET WITH AI ANALYSIS
 # -------------------------------
 @diet_bp.route("/log", methods=["POST"])
+@jwt_required()
 def log_diet():
     data = request.get_json()
 
-    user_id = data.get("user_id")
+    user_id = int(get_jwt_identity())   # identity from JWT, not client input
     meal_type = data.get("meal_type")
     food_item = data.get("food_item")
 
-    if not all([user_id, meal_type, food_item]):
+    if not all([meal_type, food_item]):
         return jsonify({"error": "Missing required fields"}), 400
 
     # AI Analysis

@@ -1,7 +1,11 @@
+from dotenv import load_dotenv
+load_dotenv()  # load .env before config/db import reads environment variables
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from sqlalchemy.orm import Session
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import JWTManager, create_access_token
 
 from database.db import engine
 from database.models import Base, User
@@ -27,6 +31,18 @@ app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key")
 
 CORS(app, supports_credentials=True)
+
+# ---------------------------
+# JWT SETUP (secret from environment only — no insecure fallback)
+# ---------------------------
+JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+if not JWT_SECRET_KEY:
+    raise RuntimeError(
+        "JWT_SECRET_KEY is not set. Add it to mental_health_journal/.env "
+        "(or the environment) before starting the server."
+    )
+app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
+jwt_manager = JWTManager(app)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -99,10 +115,15 @@ def login():
         if not valid:
             return jsonify({"success": False, "message": "Invalid credentials"}), 401
 
+        user_id = user.id  # capture before the session closes
+
+    access_token = create_access_token(identity=str(user_id))
     return jsonify({
         "success": True,
         "message": "Login successful",
-        "user": username
+        "access_token": access_token,
+        "user_id": user_id,
+        "username": username,
     }), 200
 
 

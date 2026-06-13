@@ -25,3 +25,7 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# DB backups created by migration scripts
+backups/
+mental_health_journal/backups/

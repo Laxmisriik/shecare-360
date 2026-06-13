@@ -3,6 +3,7 @@
 from flask import Blueprint, request, jsonify, session
 from nlp.sentiment import detect_emotion
 from nlp.chatbot import get_reply
+from flask_jwt_extended import jwt_required
 
 chat_bp = Blueprint("chat", __name__)
 
@@ -14,6 +15,7 @@ def get_memory():
 
 
 @chat_bp.route("/chat", methods=["POST"])
+@jwt_required()
 def chat():
     data = request.json or {}
     text = data.get("message", "").strip()
@@ -46,6 +48,7 @@ def chat():
 
 
 @chat_bp.route("/history", methods=["GET"])
+@jwt_required()
 def chat_history():
     return jsonify({
         "memory": session.get("memory", [])

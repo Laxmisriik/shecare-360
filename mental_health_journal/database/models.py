@@ -13,6 +13,7 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from database.db import Base
+from sqlalchemy import Boolean, Float
 
 
 # ---------------------------
@@ -40,6 +41,12 @@ class User(Base):
 
     diets = relationship(
         "DietLog",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
+    pregnancies = relationship(
+        "PregnancyLog",
         back_populates="user",
         cascade="all, delete-orphan"
     )
@@ -168,3 +175,54 @@ class DietLog(Base):
     logged_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="diets")
+# ---------------------------
+# PREGNANCY TRACKING MODEL
+# ---------------------------
+
+class PregnancyLog(Base):
+    __tablename__ = "pregnancy_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    last_menstrual_period = Column(Date, nullable=False)
+    expected_due_date = Column(Date)
+    current_week = Column(Integer)
+
+    symptoms = Column(JSON)  # nausea, fatigue, cravings etc
+    notes = Column(Text)
+
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    user = relationship("User", back_populates="pregnancies")
+
+class HealthMetric(Base):
+    __tablename__ = "health_metrics"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    heart_rate = Column(Integer)
+    sleep_hours = Column(Float)
+    steps = Column(Integer)
+    calories_burned = Column(Integer)
+    hrv = Column(Float)  # stress indicator
+
+    recorded_at = Column(DateTime, default=datetime.utcnow)
+
+# database/models.py
+
+
+# ---------------------------
+# EMERGENCY HELPLINE MODEL
+# ---------------------------
+class Helpline(Base):
+    __tablename__ = "helplines"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), nullable=False)
+    phone = Column(String(20), nullable=False)
+
+    region = Column(String(100))          # Tamil Nadu, Kerala, India
+    category = Column(String(50))          # mental, suicide, women
+    is_national = Column(Boolean, default=False)

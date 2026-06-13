@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from database.queries import save_entry, list_entries
+from flask_jwt_extended import jwt_required
 
 
 journal_bp = Blueprint("journal", __name__)
@@ -8,6 +9,7 @@ journal_bp = Blueprint("journal", __name__)
 
 
 @journal_bp.route("/save", methods=["POST"])
+@jwt_required()
 def save():
     data = request.json or {}
     message = data.get("message")
@@ -26,6 +28,7 @@ def save():
 
 
 @journal_bp.route("/entries", methods=["GET"])
+@jwt_required()
 def entries():
     limit = int(request.args.get("limit", 100))
     results = list_entries(limit=limit)
