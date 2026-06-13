@@ -55,12 +55,12 @@ export default function DietTracker() {
 
   const fetchHistory = async () => {
     if (userId == null) return;
-    try { const r = await authedFetch(`/api/diet/history/${userId}`); setHistory(await r.json() || []); }
+    try { const r = await authedFetch(`/api/diet/history`); setHistory(await r.json() || []); }
     catch { setHistory([]); }
   };
   const fetchRecs = async () => {
     if (userId == null) return;
-    try { const r = await authedFetch(`/api/diet/recommendations/${userId}`); setRecs(await r.json()); }
+    try { const r = await authedFetch(`/api/diet/recommendations`); setRecs(await r.json()); }
     catch {}
   };
   useEffect(() => { fetchHistory(); fetchRecs(); }, [userId]);

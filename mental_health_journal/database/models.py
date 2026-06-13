@@ -51,6 +51,12 @@ class User(Base):
         cascade="all, delete-orphan"
     )
 
+    journals = relationship(
+        "JournalEntry",
+        back_populates="user",
+        cascade="all, delete-orphan"
+    )
+
 
 # ---------------------------
 # JOURNAL MODEL
@@ -59,14 +65,23 @@ class JournalEntry(Base):
     __tablename__ = "journal_entries"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
     message = Column(Text, nullable=False)
     mood = Column(String(64))
     confidence = Column(String(16))
     created_at = Column(DateTime, default=datetime.utcnow)
 
+    user = relationship("User", back_populates="journals")
+
     def to_dict(self):
         return {
             "id": self.id,
+            "user_id": self.user_id,
             "message": self.message,
             "mood": self.mood,
             "confidence": self.confidence,
